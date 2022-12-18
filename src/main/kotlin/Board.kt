@@ -11,12 +11,12 @@ class Board : JPanel(), ActionListener {
     private val boardWidth = 300
     private val boardHeight = 300
 
-    private val delay = 100
+    private val delay = 1000
 
     private val moderator = Moderator.GRAPHITE
     private val coreShape = Shape.SPHERE
     private val coreDimensions = listOf(200.0)
-    private val fuelVolume = 25.0
+    private val fuelVolume = 30.0
     private val poisonVolume = 0.0
     private val fuelType = Fuel.U235
     private var time = 0.0
@@ -46,7 +46,9 @@ class Board : JPanel(), ActionListener {
     }
 
     private fun doDrawing(g: Graphics?) {
-        g?.drawString(RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0).power.toBigDecimal().toPlainString(), 100, 100)
+        var power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
+        g?.drawString(power.power.toBigDecimal().toPlainString(), 100, 100)
+        g?.drawString(power.keff.toBigDecimal().toPlainString(), 100, 125)
         Toolkit.getDefaultToolkit().sync()
     }
 
