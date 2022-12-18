@@ -14,6 +14,6 @@ class ThermalUtilizationPoison (moderator: Moderator, coreShape: Shape, coreDime
         Moderator.GRAPHITE -> (Moderator.GRAPHITE.density*moderatorVolume*6.022e22*(Moderator.GRAPHITE.thermalNeutronCross/1e+24))/Moderator.GRAPHITE.molarMass
     }
     private var macroPoison = (poisonVolume*2.34*6.022e22*(3847/1e+24))/10.0129369
-    private var macroFuel = (fuelVolume*19.1*6.022e22*((587.0+99.3)/1e+24))/235.04393
+    private var macroFuel = (fuelVolume*Fuel.U235.density*6.022e22*(Fuel.U235.crossSection/1e+24))/Fuel.U235.molarMass
     var thermalUtilization = macroFuel/(macroFuel+macroPoison+macroMod)
 }

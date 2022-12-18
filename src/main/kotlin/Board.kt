@@ -5,10 +5,25 @@ import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 
 import javax.swing.JPanel
+import javax.swing.Timer
 
 class Board : JPanel(), ActionListener {
     private val boardWidth = 300
     private val boardHeight = 300
+
+    private val delay = 100
+
+    private val moderator = Moderator.GRAPHITE
+    private val coreShape = Shape.SPHERE
+    private val coreDimensions = listOf(200.0)
+    private val fuelVolume = 25.0
+    private val poisonVolume = 0.0
+    private val fuelType = Fuel.U235
+    private var time = 0.0
+    private val power0 = 1.0
+
+    private var inGame = true
+    private var timer: Timer? = null
 
     init {
         addKeyListener(TAdapter())
@@ -20,7 +35,8 @@ class Board : JPanel(), ActionListener {
     }
 
     private fun initGame() {
-
+        timer = Timer(delay, this)
+        timer!!.start()
     }
 
     public override fun paintComponent(g: Graphics?) {
@@ -30,16 +46,18 @@ class Board : JPanel(), ActionListener {
     }
 
     private fun doDrawing(g: Graphics?) {
-        g?.drawString("Hello World", 150 , 150)
+        g?.drawString(RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0).power.toBigDecimal().toPlainString(), 100, 100)
+        Toolkit.getDefaultToolkit().sync()
     }
+
     private inner class TAdapter : KeyAdapter() {
         override fun keyPressed(e: KeyEvent?) {
             //val key = e!!.keyCode
 
         }
     }
-
     override fun actionPerformed(e: ActionEvent?) {
-
+        time += 1.0
+        this.repaint()
     }
 }
