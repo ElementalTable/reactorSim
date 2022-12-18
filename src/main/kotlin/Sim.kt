@@ -13,15 +13,17 @@ class Sim : JFrame() {
         pack()
 
         setLocationRelativeTo(null)
-        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
     }
 
     companion object {
         @JvmStatic
-        fun main(args: Array<String>)
+        fun main(args: Array<String>) {
+
             EventQueue.invokeLater {
                 val ex = Sim()
                 ex.isVisible = true
             }
+        }
     }
 }
