@@ -8,4 +8,8 @@ class RxPower (moderator: Moderator, coreShape: Shape, coreDimensions: List<Doub
     var power = when(fuelType){
         Fuel.U235 -> power0*exp(((keff-1)/Fuel.U235.betaTau)*time)
     }
+    var reactivity = (keff-1)/keff
+    var period = when(fuelType){
+        Fuel.U235 -> Fuel.U235.betaTau/keff
+    }
 }
