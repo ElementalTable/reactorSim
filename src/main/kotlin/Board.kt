@@ -8,8 +8,8 @@ import javax.swing.JPanel
 import javax.swing.Timer
 
 class Board : JPanel(), ActionListener {
-    private val boardWidth = 1500
-    private val boardHeight = 700
+    private val boardWidth = 700
+    private val boardHeight = 300
 
     private val delay = 1
 
@@ -90,7 +90,7 @@ class Board : JPanel(), ActionListener {
         }
     }
     override fun actionPerformed(e: ActionEvent?) {
-        time += 0.001
+        time += 0.01
         controlSystem()
         this.repaint()
     }
