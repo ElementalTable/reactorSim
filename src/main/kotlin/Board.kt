@@ -15,21 +15,21 @@ class Board : JPanel(), ActionListener {
 
     private val moderator = Moderator.GRAPHITE
     private val coreShape = Shape.SPHERE
-    private val coreDimensions = listOf(200.0)
-    private val fuelVolume = 30.0
-    private val poisonVolume = 0.0
+    private val coreDimensions = listOf(500.0)
+    private val fuelVolume = 100.0
+    private var poisonVolume = 10.0
     private val fuelType = Fuel.U235
     private val power0 = 1.0
-    private var powerInt = 0.0
 
-    private var inGame = true
+    private var poisonOut = false
+    private var poisonIn = false
+
     private var timer: Timer? = null
     private var time = 0.0
-    private var timeInt = 0.0
 
     init {
         addKeyListener(TAdapter())
-        background = Color.black
+        background = Color.white
         isFocusable = true
 
         preferredSize = Dimension(boardWidth, boardHeight)
@@ -41,6 +41,11 @@ class Board : JPanel(), ActionListener {
         timer!!.start()
     }
 
+    private fun controlSystem() {
+        if (poisonIn) poisonVolume += 0.001
+        if (poisonOut) poisonVolume -= 0.001
+    }
+
     public override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
 
@@ -48,27 +53,45 @@ class Board : JPanel(), ActionListener {
     }
 
     private fun doDrawing(g: Graphics?) {
-        var power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
+        val power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
+        g?.drawString("Elapsed Time:", 10, 75)
+        g?.drawString(time.toBigDecimal().toPlainString(), 100, 75)
+        g?.drawString("RX Power:", 10, 100)
         g?.drawString(power.power.toBigDecimal().toPlainString(), 100, 100)
+        g?.drawString("Keff:", 10, 125)
         g?.drawString(power.keff.toBigDecimal().toPlainString(), 100, 125)
-        powerInt = power.power * 1000
-        g?.drawLine(timeInt.toInt(), powerInt.toInt(), timeInt.toInt(), powerInt.toInt())
+        g?.drawString("Period:", 10, 150)
+        g?.drawString(power.period.toBigDecimal().toPlainString(), 100, 150)
+        g?.drawString("Reactivity:", 10, 175)
+        g?.drawString(power.reactivity.toBigDecimal().toPlainString(), 100, 175)
+        g?.drawString("Poison Volume:", 10, 200)
+        g?.drawString(poisonVolume.toBigDecimal().toPlainString(), 100, 200)
+        g?.color = Color.black
         Toolkit.getDefaultToolkit().sync()
     }
 
     private inner class TAdapter : KeyAdapter() {
         override fun keyPressed(e: KeyEvent?) {
-            //val key = e!!.keyCode
+            val key = e!!.keyCode
+            if (key == KeyEvent.VK_DOWN && !poisonOut) {
+                poisonIn = true
+                poisonOut = false
+            }
 
+            if (key == KeyEvent.VK_UP && !poisonIn) {
+                poisonIn = false
+                poisonOut = true
+            }
+
+            if (key == KeyEvent.VK_SPACE) {
+                poisonIn = false
+                poisonOut = false
+            }
         }
     }
     override fun actionPerformed(e: ActionEvent?) {
         time += 0.001
-        timeInt = time*1000
+        controlSystem()
         this.repaint()
-    }
-
-    fun plot(y:Double, height:Int, width: Int){
-
     }
 }

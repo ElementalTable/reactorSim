@@ -10,6 +10,6 @@ class RxPower (moderator: Moderator, coreShape: Shape, coreDimensions: List<Doub
     }
     var reactivity = (keff-1)/keff
     var period = when(fuelType){
-        Fuel.U235 -> Fuel.U235.betaTau/keff
+        Fuel.U235 -> (Fuel.U235.betaTau-reactivity)/(0.1*reactivity)
     }
 }
