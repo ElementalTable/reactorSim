@@ -7,6 +7,11 @@ import java.awt.event.KeyEvent
 import javax.swing.JPanel
 import javax.swing.Timer
 
+import jetbrains.datalore.*
+import org.jetbrains.kotlinx.dataframe.api.toDataFrame
+import org.jetbrains.letsPlot.*
+import org.jetbrains.letsPlot.geom.geomLine
+
 class Board : JPanel(), ActionListener {
     private val boardWidth = 700
     private val boardHeight = 300
@@ -24,9 +29,14 @@ class Board : JPanel(), ActionListener {
     private var poisonOut = false
     private var poisonIn = false
 
+    private var timeArray = arrayListOf(1)
+    private var powerArray = arrayListOf(1.0)
+
     private var timer: Timer? = null
     private var time = 0.0
+    private var timeInt = 0
 
+    private var power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
     init {
         addKeyListener(TAdapter())
         background = Color.white
@@ -40,10 +50,18 @@ class Board : JPanel(), ActionListener {
         timer = Timer(delay, this)
         timer!!.start()
     }
-
     private fun controlSystem() {
         if (poisonIn) poisonVolume += 0.001
         if (poisonOut) poisonVolume -= 0.001
+    }
+
+    private fun matrixData() {
+        timeArray.add(timeInt)
+        powerArray.add(power.power)
+     }
+
+    private fun plotData() {
+        var p = letsPlot (powerArray.toDataFrame()) {x="Power"} + geomLine()
     }
 
     public override fun paintComponent(g: Graphics?) {
@@ -53,7 +71,6 @@ class Board : JPanel(), ActionListener {
     }
 
     private fun doDrawing(g: Graphics?) {
-        val power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
         g?.drawString("Elapsed Time:", 10, 75)
         g?.drawString(time.toBigDecimal().toPlainString(), 100, 75)
         g?.drawString("RX Power:", 10, 100)
@@ -91,7 +108,11 @@ class Board : JPanel(), ActionListener {
     }
     override fun actionPerformed(e: ActionEvent?) {
         time += 0.01
+        timeInt += 1
+        power = RxPower(moderator, coreShape, coreDimensions, fuelVolume, poisonVolume, fuelType, time, power0)
         controlSystem()
+        matrixData()
+        plotData()
         this.repaint()
     }
 }
